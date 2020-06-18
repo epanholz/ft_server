@@ -1,0 +1,40 @@
+# Default server configuration
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name localhost;
+}
+
+server {
+    # SSL configuration
+    # Listen to ports
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name localhost;
+    #  Certificates SSL
+    ssl_certificate /etc/ssl/certs/localhost.crt;
+    ssl_certificate_key /etc/ssl/private/localhost.key;
+    #  Protocols SSL
+    ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+    # Root
+    root /var/www/html;
+    # Indexes, index.php for php
+    index index.html index.htm index.nginx-debian.html index.php;
+    client_max_body_size 11M;
+    location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to displaying a 404.
+        try_files $uri $uri/ =404;
+        autoindex on;
+    }
+    # pass PHP scripts to FastCGI server
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        # With php-fpm (or other unix sockets):
+        # We got php-fpm
+        fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+        # With php-cgi (or other tcp sockets):
+        # fastcgi_pass 127.0.0.1:9000;
+    }
+}
